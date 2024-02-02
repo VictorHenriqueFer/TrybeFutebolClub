@@ -11,5 +11,5 @@ COPY . .
 # Sinalize que aplicação expõe a porta 3001
 EXPOSE 3001
 # Configurar os comandos para iniciar a aplicação de acordo com as boas práticas
-CMD [ "npm", "run", "dev" ]
+ENTRYPOINT [ "npm", "run", "dev" ]
 # Dica: Leia a seção Docker e Docker-compose no README para mais informações
