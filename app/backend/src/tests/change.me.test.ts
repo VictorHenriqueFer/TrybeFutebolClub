@@ -1,45 +1,42 @@
+
 import * as sinon from 'sinon';
 import * as chai from 'chai';
+
 // @ts-ignore
 import chaiHttp = require('chai-http');
 
-import { app } from '../app';
-import Example from '../database/models/ExampleModel';
+import { App } from '../app';
+import SequelizeTeams from '../database/models/SequelizeTeams'
+import { teams, team } from './mocks/Teams.mock';
 
-import { Response } from 'superagent';
 
 chai.use(chaiHttp);
+ const { app } = new App
 
 const { expect } = chai;
 
-describe('Seu teste', () => {
-  /**
-   * Exemplo do uso de stubs com tipos
-   */
 
-  // let chaiHttpResponse: Response;
+describe('Teams Test', function() {
+  it('Retorna todos os teams', async function() {
+    sinon.stub(SequelizeTeams, 'findAll').resolves( teams as any)
+    const {status, body} = await chai.request(app).get('/teams')
 
-  // before(async () => {
-  //   sinon
-  //     .stub(Example, "findOne")
-  //     .resolves({
-  //       ...<Seu mock>
-  //     } as Example);
-  // });
-
-  // after(()=>{
-  //   (Example.findOne as sinon.SinonStub).restore();
-  // })
-
-  // it('...', async () => {
-  //   chaiHttpResponse = await chai
-  //      .request(app)
-  //      ...
-
-  //   expect(...)
-  // });
-
-  it('Seu sub-teste', () => {
-    expect(false).to.be.eq(true);
+    expect(status).to.equal(200);
+    expect(body).to.deep.equal(teams)
   });
+  it('Deve devolver um team por id', async function() {
+    sinon.stub(SequelizeTeams, 'findOne').resolves( team as any)
+    const { status, body} = await chai.request(app).get('/teams/1')
+
+    expect(status).to.equal(200);
+    expect(body).to.deep.equal(team)
+  })
+  it('Caso seja passado um id invalido retorna um erro', async function(){
+    sinon.stub(SequelizeTeams, 'findOne').resolves(null)
+    const {status, body} = await chai.request(app).get('/teams/30')
+
+    expect(status).to.equal(404)
+    expect(body).to.deep.equal({ message: 'Team 30 not found' })
+  })
+  afterEach(sinon.restore);
 });
