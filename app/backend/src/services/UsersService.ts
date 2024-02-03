@@ -12,6 +12,11 @@ export default class UsersService {
     private jwtService = JWT,
   ) {}
 
+  public async findAllUser(): Promise<ServiceResponse<IUser[]>> {
+    const allUsers = await this.usersModel.findAll();
+    return { status: 'SUCCESSFUL', data: allUsers };
+  }
+
   public async login(data:IUser): Promise<ServiceResponse<ServiceMessage | IToken>> {
     const user = await this.usersModel.findByEmail(data.email);
     if (user) {
