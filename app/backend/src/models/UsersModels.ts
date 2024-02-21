@@ -22,7 +22,14 @@ export default class UsersModels implements IUserModel {
   async findByEmail(email: IUser['email']): Promise<IUser | null> {
     const user = await this.model.findOne({ where: { email } });
     if (!user) return null;
-    const { id, password } = user;
-    return { id, email, password };
+    const { id, password, role } = user;
+    return { id, email, password, role };
+  }
+
+  async findByRole(id: IUser['id']): Promise<string | null> {
+    const userId = await this.model.findByPk(id);
+    if (!userId) return null;
+    const { role } = userId;
+    return role;
   }
 }

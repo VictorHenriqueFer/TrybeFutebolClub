@@ -20,4 +20,10 @@ export default class UserController {
     }
     return res.status(200).json(serviceResponse.data);
   }
+
+  public async getRole(_req: Request, res: Response) {
+    const { role } = res.locals.auth;
+    console.log(this.usersService);
+    return res.status(200).json({ role });
+  }
 }

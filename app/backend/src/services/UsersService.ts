@@ -21,12 +21,22 @@ export default class UsersService {
     const user = await this.usersModel.findByEmail(data.email);
     if (user) {
       if (!bcrypt.compareSync(data.password, user.password)) {
-        return { status: 'INVALID_DATA', data: { message: 'Email ou senha inválido' } };
+        return { status: 'UNAUTHORIZED', data: { message: 'Invalid email or password' } };
       }
-      const { email } = user;
-      const token = this.jwtService.sign({ email });
+      const { email, role } = user;
+      console.log(email, role);
+      const token = this.jwtService.sign({ email, role });
       return { status: 'SUCCESSFUL', data: { token } };
     }
-    return { status: 'NOT_FOUND', data: { message: 'User not found' } };
+    return { status: 'UNAUTHORIZED', data: { message: 'Invalid email or password' } };
+  }
+
+  public async findByRole(role: IUser['id']):
+  Promise<ServiceResponse<{ role: string } | ServiceMessage>> {
+    const users = await this.usersModel.findByRole(role);
+    if (!users) {
+      return { status: 'INVALID_DATA', data: { message: 'Role not found' } };
+    }
+    return { status: 'SUCCESSFUL', data: { role: users } };
   }
 }
