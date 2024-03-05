@@ -29,12 +29,12 @@ class Validations {
       return res.status(401).json({ message: 'Token must be a valid token' });
     }
 
-    const secret = process.env.JWT_SECRET || 'secret';
+    const secret = process.env.JWT_SECRET || 'jwt_secret';
 
     try {
+      console.log(secret);
       const payload = jwt.verify(token, secret);
       res.locals.auth = payload;
-      console.log(payload);
       next();
     } catch (err) {
       return res.status(401).json({ message: 'Invalid Token' });

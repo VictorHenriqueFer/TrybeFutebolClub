@@ -9,7 +9,7 @@ import SequelizeUsers from '../database/models/SequelizeUsers';
 
 
 chai.use(chaiHttp);
- const { app } = new App
+ const { app } = new App()
 
 const { expect } = chai;
 
@@ -26,13 +26,13 @@ describe('Users Test', function() {
         expect(status).to.equal(401);
         expect(body).to.deep.equal({ message: 'Invalid email or password' });
     })
-    it.only('Testa se ao passar um email valido e senha valida retorna um token', async function() {
+    it('Testa se ao passar um email valido e senha valida retorna um token', async function() {
         const { status, body } =  await chai.request(app).post('/login')
         .send({ email: "user@user.com",
         password: "secret_user"
         });
         console.log(body)
-        expect(status).to.equal(500);
+        expect(status).to.equal(200);
         expect(body).to.have.property('token');
     });
     afterEach(sinon.restore);
