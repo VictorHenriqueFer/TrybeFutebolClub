@@ -29,3 +29,14 @@ export interface ILeaderboardHome {
   goalsFavor: number,
   goalsOwn: number,
 }
+
+export interface ILeaderboard {
+  awayTeam?: any,
+  homeTeam?: any,
+  id: number,
+  homeTeamId: number,
+  homeTeamGoals: number
+  awayTeamId: number,
+  awayTeamGoals: number,
+  inProgress: boolean,
+}

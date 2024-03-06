@@ -8,5 +8,10 @@ export type Team = {
   goalsFavor: number,
   goalsOwn: number,
   goalsBalance: number,
-  efficiency: string,
+  efficiency: number,
+};
+
+export type TeamsGol = {
+  goalsFavor: number,
+  goalsOwn: number,
 };

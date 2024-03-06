@@ -1,7 +1,8 @@
+import { Team, TeamsGol } from '../utils/types';
 import { ServiceMessage, ServiceResponse } from '../utils/ServiceResponse';
 import SequelizeMatches from '../database/models/SequelizeMatches';
 import SequelizeTeams from '../database/models/SequelizeTeams';
-import { IMatches, IMatchesResult } from '../Interfaces/matches/IMatches';
+import { ILeaderboard, IMatches, IMatchesResult } from '../Interfaces/matches/IMatches';
 import { IMatchesModel } from '../Interfaces/matches/IMatchesModel';
 
 export default class MatchesModel implements IMatchesModel {
@@ -145,11 +146,11 @@ export default class MatchesModel implements IMatchesModel {
 
       const matches = allMatches.filter((match) => match.awayTeam.teamName === team.name);
 
-      const defeat = matches.filter((match) => match.homeTeamGoals > match.awayTeamGoals).length;
+      const defeat = matches.filter((match) => match.awayTeamGoals < match.homeTeamGoals).length;
 
-      const wins = matches.filter((match) => match.homeTeamGoals < match.awayTeamGoals).length;
+      const wins = matches.filter((match) => match.awayTeamGoals > match.homeTeamGoals).length;
 
-      const draws = matches.filter((match) => match.homeTeamGoals === match.awayTeamGoals).length;
+      const draws = matches.filter((match) => match.awayTeamGoals === match.homeTeamGoals).length;
 
       team.totalDraws += draws;
       team.totalVictories += wins;
@@ -168,22 +169,46 @@ export default class MatchesModel implements IMatchesModel {
     return this.getPointsAway();
   };
 
+  getHome(team: Team, allMatches: ILeaderboard[]) {
+    console.log(this);
+    const teamGoals = allMatches
+      .filter((match) => match.homeTeam.teamName === team.name).reduce((acc, cur) => {
+        acc.goalsFavor += cur.homeTeamGoals;
+        acc.goalsOwn += cur.awayTeamGoals;
+
+        return acc;
+      }, { goalsFavor: 0, goalsOwn: 0 });
+    return teamGoals;
+  }
+
+  getAway(team: Team, allMatches: ILeaderboard[]) {
+    console.log(this);
+    const teamGoals = allMatches
+      .filter((match) => match.awayTeam.teamName === team.name).reduce((acc, cur) => {
+        acc.goalsFavor += cur.awayTeamGoals;
+        acc.goalsOwn += cur.homeTeamGoals;
+
+        return acc;
+      }, { goalsFavor: 0, goalsOwn: 0 });
+
+    console.log(teamGoals);
+    return teamGoals;
+  }
+
   async getGoals(route: 'home' | 'away') {
     const { allMatches } = await this.createdTeams();
 
     const response = (await this.selectTeam(route)).map((teams) => {
       const team = { ...teams };
-
-      const teamGoals = allMatches
-        .filter((match) => match.homeTeam.teamName === team.name).reduce((acc, cur) => {
-          acc.goalsFavor += cur.homeTeamGoals;
-          acc.goalsOwn += cur.awayTeamGoals;
-
-          return acc;
-        }, { goalsFavor: 0, goalsOwn: 0 });
-
-      team.goalsFavor += teamGoals.goalsFavor;
-      team.goalsOwn += teamGoals.goalsOwn;
+      let teamGoals: TeamsGol = { goalsFavor: 0, goalsOwn: 0 };
+      if (route === 'home') {
+        teamGoals = this.getHome(team, allMatches);
+      }
+      if (route === 'away') {
+        teamGoals = this.getAway(team, allMatches);
+      }
+      team.goalsFavor = teamGoals.goalsFavor;
+      team.goalsOwn = teamGoals.goalsOwn;
       team.goalsBalance += team.goalsFavor - team.goalsOwn;
       team.efficiency += Number(((team.totalPoints / (team.totalGames * 3)) * 100).toFixed(2));
 

@@ -7,6 +7,7 @@ import chaiHttp = require('chai-http');
 import { App } from '../app';
 import SequelizeUsers from '../database/models/SequelizeUsers';
 import { before } from 'mocha'
+import leaderHome from './mocks/learder.mock';
 
 
 chai.use(chaiHttp);
@@ -112,6 +113,19 @@ describe('Matches Test', function() {
         expect(body).to.have.property('awayTeamGoals');
         expect(body).to.have.property('inProgress');
     })
+    it('testa se ao fazer a requisição na classificação home retorna a classificação', async function() {
+        const { status, body } =  await chai.request(app).get('/leaderboard/home');
+        expect(status).to.equal(200);
+        expect(body).to.be.an('array');
+        expect(body).to.have.lengthOf(16);
+    })
+    it('testa se ao fazer a requisição na classificação away retorna a classificação', async function() {
+        const { status, body } =  await chai.request(app).get('/leaderboard/away');
+        expect(status).to.equal(200);
+        expect(body).to.be.an('array');
+        expect(body).to.have.lengthOf(16);
+    })
 
     afterEach(sinon.restore);
 });
+
