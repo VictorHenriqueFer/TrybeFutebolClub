@@ -7,11 +7,6 @@ export default class UserController {
     private usersService = new UsersService(),
   ) {}
 
-  public async allUser(_req: Request, res: Response) {
-    const serviceResponse = await this.usersService.findAllUser();
-    res.status(200).json(serviceResponse.data);
-  }
-
   public async login(req: Request, res: Response) {
     const serviceResponse = await this.usersService.login(req.body);
 

@@ -12,11 +12,6 @@ export default class UsersService {
     private jwtService = JWT,
   ) {}
 
-  public async findAllUser(): Promise<ServiceResponse<IUser[]>> {
-    const allUsers = await this.usersModel.findAll();
-    return { status: 'SUCCESSFUL', data: allUsers };
-  }
-
   public async login(data:IUser): Promise<ServiceResponse<ServiceMessage | IToken>> {
     const user = await this.usersModel.findByEmail(data.email);
     if (user) {
@@ -28,14 +23,5 @@ export default class UsersService {
       return { status: 'SUCCESSFUL', data: { token } };
     }
     return { status: 'UNAUTHORIZED', data: { message: 'Invalid email or password' } };
-  }
-
-  public async findByRole(role: IUser['id']):
-  Promise<ServiceResponse<{ role: string } | ServiceMessage>> {
-    const users = await this.usersModel.findByRole(role);
-    if (!users) {
-      return { status: 'INVALID_DATA', data: { message: 'Role not found' } };
-    }
-    return { status: 'SUCCESSFUL', data: { role: users } };
   }
 }

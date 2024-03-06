@@ -7,6 +7,6 @@ export interface IMatchesModel {
   updateMatches(id: number): Promise<ServiceMessage>,
   updateResultadoMatches(id:number, result: IMatchesResult): Promise<IMatches | void>,
   createdMatches(data: Partial<IMatches>): Promise<ServiceResponse<IMatches>>,
-  getGoals(): Promise<ILeaderboardHome[]>
-  getLeaderBoardOrder(): Promise<ILeaderboardHome[]>
+  getGoals(route: 'home' | 'away'): Promise<ILeaderboardHome[]>
+  getLeaderBoardOrder(route: 'home' | 'away'): Promise<ILeaderboardHome[]>
 }

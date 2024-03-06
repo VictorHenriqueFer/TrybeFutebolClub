@@ -42,8 +42,8 @@ export default class MatcheController {
   }
 
   public async getLeaderboardHome(req: Request, res: Response) {
-    const { status, data } = await this.matchesService.getLeaderboardHome();
-
+    const { status, data } = await this.matchesService
+      .getLeaderboardHome(req.route.path.split('/')[1]);
     return res.status(mapStatusHTTP(status)).json(data);
   }
 }

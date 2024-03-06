@@ -112,7 +112,7 @@ export default class MatchesModel implements IMatchesModel {
     return { allMatches, team };
   }
 
-  async getPoints() {
+  async getPointsHome() {
     const { allMatches, team: newTeams } = await this.createdTeams();
 
     const infoTeams = newTeams.map((newTeam) => {
@@ -131,18 +131,47 @@ export default class MatchesModel implements IMatchesModel {
       team.totalLosses += defeat;
       team.totalGames += matches.length;
       team.totalPoints += (3 * wins) + draws;
-
       return team;
     });
 
     return infoTeams;
   }
 
-  async getGoals() {
-    const teamsHome = await this.getPoints();
+  async getPointsAway() {
+    const { allMatches, team: newTeams } = await this.createdTeams();
+
+    const infoTeams = newTeams.map((newTeam) => {
+      const team = { ...newTeam };
+
+      const matches = allMatches.filter((match) => match.awayTeam.teamName === team.name);
+
+      const defeat = matches.filter((match) => match.homeTeamGoals > match.awayTeamGoals).length;
+
+      const wins = matches.filter((match) => match.homeTeamGoals < match.awayTeamGoals).length;
+
+      const draws = matches.filter((match) => match.homeTeamGoals === match.awayTeamGoals).length;
+
+      team.totalDraws += draws;
+      team.totalVictories += wins;
+      team.totalLosses += defeat;
+      team.totalGames += matches.length;
+      team.totalPoints += (3 * wins) + draws;
+      return team;
+    });
+    return infoTeams;
+  }
+
+  selectTeam = async (route: 'home' | 'away') => {
+    if (route === 'home') {
+      return this.getPointsHome();
+    }
+    return this.getPointsAway();
+  };
+
+  async getGoals(route: 'home' | 'away') {
     const { allMatches } = await this.createdTeams();
 
-    const response = teamsHome.map((teams) => {
+    const response = (await this.selectTeam(route)).map((teams) => {
       const team = { ...teams };
 
       const teamGoals = allMatches
@@ -164,8 +193,8 @@ export default class MatchesModel implements IMatchesModel {
     return response;
   }
 
-  async getLeaderBoardOrder() {
-    const leaderboardHome = await this.getGoals();
+  async getLeaderBoardOrder(route: 'home' | 'away') {
+    const leaderboardHome = await this.getGoals(route);
 
     const orderTeams = leaderboardHome.sort((a, b) => {
       if (b.totalPoints !== a.totalPoints) {

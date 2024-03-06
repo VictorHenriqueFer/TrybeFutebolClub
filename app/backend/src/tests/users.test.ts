@@ -31,7 +31,6 @@ describe('Users Test', function() {
         .send({ email: "user@user.com",
         password: "secret_user"
         });
-        console.log(body)
         expect(status).to.equal(200);
         expect(body).to.have.property('token');
     });

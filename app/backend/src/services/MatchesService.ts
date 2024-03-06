@@ -58,9 +58,8 @@ export default class MatchesService {
     return newMatche;
   }
 
-  public async getLeaderboardHome() {
-    const leaderboardHome = await this.matchesModel.getLeaderBoardOrder();
-
+  public async getLeaderboardHome(route: 'home' | 'away') {
+    const leaderboardHome = await this.matchesModel.getLeaderBoardOrder(route);
     return { status: 'SUCCESSFUL', data: leaderboardHome };
   }
 }
