@@ -15,3 +15,5 @@ export type TeamsGol = {
   goalsFavor: number,
   goalsOwn: number,
 };
+
+export type Route = 'home' | 'away' | '';

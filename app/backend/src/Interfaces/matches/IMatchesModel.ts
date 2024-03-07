@@ -1,5 +1,5 @@
 import { ServiceMessage, ServiceResponse } from '../../utils/ServiceResponse';
-import { ILeaderboardHome, IMatches, IMatchesResult } from './IMatches';
+import { IMatches, IMatchesResult } from './IMatches';
 
 export interface IMatchesModel {
   findAll(): Promise<IMatches[]>,
@@ -7,6 +7,4 @@ export interface IMatchesModel {
   updateMatches(id: number): Promise<ServiceMessage>,
   updateResultadoMatches(id:number, result: IMatchesResult): Promise<IMatches | void>,
   createdMatches(data: Partial<IMatches>): Promise<ServiceResponse<IMatches>>,
-  getGoals(route: 'home' | 'away'): Promise<ILeaderboardHome[]>
-  getLeaderBoardOrder(route: 'home' | 'away'): Promise<ILeaderboardHome[]>
 }

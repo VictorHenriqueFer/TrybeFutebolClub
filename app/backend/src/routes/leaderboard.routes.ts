@@ -10,4 +10,7 @@ router.get('/home', async (req: Request, res: Response) =>
 router.get('/away', async (req: Request, res: Response) =>
   matchesController.getLeaderboardHome(req, res));
 
+router.get('/', async (req: Request, res: Response) =>
+  matchesController.getLeaderboardHome(req, res));
+
 export default router;

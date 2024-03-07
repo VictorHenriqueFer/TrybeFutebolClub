@@ -1,3 +1,5 @@
+import LeaderModel from '../models/LeaderModel';
+import { ILeaderboardModel } from '../Interfaces/leaderboard/ILeaderboardModel';
 import TeamsModel from '../models/TeamsModel';
 import MatchesModel from '../models/MatchsModel';
 import { ServiceMessage, ServiceResponse } from '../utils/ServiceResponse';
@@ -8,6 +10,7 @@ import { NewEntity } from '../Interfaces';
 export default class MatchesService {
   constructor(
     private matchesModel: IMatchesModel = new MatchesModel(),
+    private leaderboardModel: ILeaderboardModel = new LeaderModel(),
     private teamsModel: TeamsModel = new TeamsModel(),
   ) { }
 
@@ -59,7 +62,7 @@ export default class MatchesService {
   }
 
   public async getLeaderboardHome(route: 'home' | 'away') {
-    const leaderboardHome = await this.matchesModel.getLeaderBoardOrder(route);
+    const leaderboardHome = await this.leaderboardModel.getLeaderBoardOrder(route);
     return { status: 'SUCCESSFUL', data: leaderboardHome };
   }
 }
